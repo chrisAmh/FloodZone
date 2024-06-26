@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   // Add Zoom Control
   L.control.zoom({ position: 'topright' }).addTo(map);
 
-  main_map_init(map); 
+
 });
 
 
