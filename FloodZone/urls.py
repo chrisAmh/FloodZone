@@ -21,7 +21,7 @@ from floodzoneapp.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',home_view,name='home'),
-    path('tweets/',tweet_view,name='tweet'),
+    path('tweet/',tweet_view,name='tweet'),
     path('post/create/',floodzone_create, name='post-create'),
-    path('floodzonemap/floodmap',floodzone_map, name='floodzone_map')  
+    path('floodzonemap/floodZone',floodzone_map, name='floodzone_map')  
 ]

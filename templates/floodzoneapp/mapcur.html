@@ -10,11 +10,10 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 <body>
     <div class="map-container">
@@ -23,7 +22,7 @@
             <div class="text-gray-100 text-xl">
                 <div class="p-2.5 mt-1 flex items-center">
                     <i onclick="toggleSidebar()" class="bi bi-filter-left p-2 top-10 left-10 bg-blue-700 rounded-md"></i></i>
-                    <!-- <h1 id="sidebarTitle" class="font-bold text-gray-200 text-[15px] ml-3">FloodZone</h1> -->
+    
                 </div>
                 <div class="my-2 bg-gray-600 h-[1px]"></div>
             </div>
@@ -46,13 +45,20 @@
                 </div>
             </div>
             <div class="text-left text-sm mt-2 w-4/5 mx-auto text-gray-200 font-bold hidden" id="submenu">
-                <h1 id="chartToggle" class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1" onclick="toggleBarchart()">Chart</h1>
+                <h1 id="chart" class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1" onclick="toggleBarchart()">Chart</h1>
                 <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">Sentiment</h1>
                 <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">Current Posts</h1>
             </div>
             <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
                 <i class="bi bi-box-arrow-in-right"></i>
                 <span class="text-[15px] ml-4 text-gray-200 font-bold">Settings</span>
+            </div>
+        </div>
+
+        <div id="chartModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="toggleBarchart()">&times;</span>
+                <canvas id="chart" width="400" height="400"></canvas>
             </div>
         </div>
         
@@ -64,15 +70,6 @@
             <button id="searchButton"><i class="bi bi-search text-sm p-2"></i></button>
         </div>
     </div>
-
-    <!-- Modal for Chart -->
-    <div id="chartModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="toggleBarchart()">&times;</span>
-            <canvas id="chart"></canvas>
-        </div>
-    </div>
-
     <script>
         const LEAFLET_CONFIG = {
             DEFAULT_CENTER: [5.6037, -0.1870],
@@ -108,23 +105,6 @@
 
         function main_map_init(map, options) {
             $.getJSON("{% url 'tweet' %}", function(data) {
-                const locations = {};
-
-                data.features.forEach(feature => {
-                    const coords = feature.geometry.coordinates;
-                    const locationKey = `${coords[1]},${coords[0]}`;
-
-                    if (!locations[locationKey]) {
-                        locations[locationKey] = { count: 0, coords: coords };
-                    }
-
-                    locations[locationKey].count++;
-                });
-
-                const sortedLocations = Object.values(locations).sort((a, b) => b.count - a.count);
-                const topLocations = sortedLocations.slice(0, 10);
-
-                // Plotting the points on the map
                 L.geoJSON(data, {
                     pointToLayer: function(feature, latlng) {
                         return L.circleMarker(latlng, {
@@ -142,53 +122,10 @@
                         });
                     }
                 }).addTo(map);
-
-                // Chart data preparation
-                const labels = topLocations.map(location => `(${location.coords[1].toFixed(2)}, ${location.coords[0].toFixed(2)})`);
-                const dataValues = topLocations.map(location => location.count);
-
-                const ctx = document.getElementById('chart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Number of Tweets',
-                            data: dataValues,
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
             });
         }
 
         main_map_init(map, {});
-
-        // function toggleSidebar() {
-        //     var sidebar = document.querySelector('.sidebar');
-        //     sidebar.classList.toggle('open');
-        // }
-
-        function toggleBarchart() {
-            var chartModal = document.getElementById('chartModal');
-            chartModal.style.display = chartModal.style.display === 'none' ? 'block' : 'none';
-        }
-
-        // function dropdown() {
-        //     var submenu = document.getElementById("submenu");
-        //     var arrow = document.getElementById("arrow");
-        //     submenu.classList.toggle("hidden");
-        //     arrow.classList.toggle("rotate-0");
-        // }
     </script>
     <script src="{% static 'js/map.js' %}"></script>
 </body>
