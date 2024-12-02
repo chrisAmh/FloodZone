@@ -26,14 +26,14 @@ from .models import Tweet
 
 csv_file_path = os.path.join(settings.BASE_DIR, 'floodzoneapp', 'floodtweets.csv')
 
-# Check if the file exists
+
 if not os.path.isfile(csv_file_path):
     raise FileNotFoundError(f"The file {csv_file_path} does not exist.")
 
-# Read the CSV file
+
 flood_tweets = pd.read_csv(csv_file_path)
 
-# Iterate through the rows of the CSV file and save the data to the database
+
 for index, row in flood_tweets.iterrows():
     tweet_id = row['tweet_id']
     username = row['username']
@@ -41,10 +41,10 @@ for index, row in flood_tweets.iterrows():
     latitude = row['latitude']
     longitude = row['longitude']
 
-    # Create a Point object for the geom field
+
     point = Point(longitude, latitude)
 
-    # Check if the tweet already exists
+
     tweet, created = Tweet.objects.update_or_create(
         tweet_id=tweet_id,
         defaults={
@@ -54,7 +54,6 @@ for index, row in flood_tweets.iterrows():
         }
     )
 
-    # Optionally, you can add logging to see what happens
     if created:
         print(f"Created new tweet with tweet_id: {tweet_id}")
     else:

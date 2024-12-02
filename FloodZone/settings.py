@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'djgeojson',
     'leaflet',
     'floodzoneapp',
+    # 'django_q',
 ]
 
 MIDDLEWARE = [
@@ -173,3 +174,15 @@ LEAFLET_CONFIG = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Q_CLUSTER = {
+#     'name': 'FloodZone',
+#     'workers': 4,
+#     'recycle': 500,
+#     'timeout': 60,
+#     'redis': {
+#         'host': '127.0.0.1',
+#         'port': 6379,
+#         'db': 0,
+#     }
+# }

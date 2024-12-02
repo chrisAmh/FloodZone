@@ -26,3 +26,7 @@ class Tweet(models.Model):
 
     def __str__(self):
         return self.text
+    
+
+# class Weather_Forecast(models.Model):
+    

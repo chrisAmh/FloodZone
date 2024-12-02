@@ -36,12 +36,11 @@ for tweet in tweets:
         timestamp = tweet.created_at
 
         # Save tweet to the database
-        location = Point(longitude, latitude)
         Tweet.objects.create(
             tweet_id=tweet.id_str,
             username=username,
             text=text,
-            location=location,
+            geom=Point(longitude, latitude),
             timestamp=timestamp
         )
         print(f'Tweet by {username} at {latitude},{longitude} saved.')
